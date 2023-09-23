@@ -19,14 +19,16 @@ export async function POST(req: Request) {
                 name,
                 imageUrl,
                 inviteCode: uuidv4(),
-                channels: [
-                    { name: "general", profileId: profile.id }
-                ]
-            }, 
-            members: {
-                create: [
-                    { profileId: profile.id, role: MemberRole.ADMIN }
-                ]
+                channels: {
+                    create: [
+                        { name: "general", profileId: profile.id }
+                    ]
+                },
+                members: {
+                    create: [
+                        { profileId: profile.id, role: MemberRole.ADMIN }
+                    ]
+                }
             }
         });
         return NextResponse.json(server);
