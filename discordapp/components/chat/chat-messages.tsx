@@ -1,23 +1,20 @@
 "use client";
-
 import { Fragment } from "react";
 import { format } from "date-fns";
 import { Member, Message, Profile } from "@prisma/client";
 import { Loader2, ServerCrash } from "lucide-react";
 
 import { useChatQuery } from "@/hooks/use-chat-query";
+import { useChatSocket } from "@/hooks/use-chat-socket";
 
 import { ChatWelcome } from "./chat-welcome";
 import { ChatItem } from "./chat-item";
-
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
-
 type MessageWithMemberWithProfile = Message & {
   member: Member & {
     profile: Profile
   }
 }
-
 interface ChatMessagesProps {
   name: string;
   member: Member;
@@ -29,7 +26,6 @@ interface ChatMessagesProps {
   paramValue: string;
   type: "channel" | "conversation";
 }
-
 export const ChatMessages = ({
   name,
   member,
@@ -42,6 +38,8 @@ export const ChatMessages = ({
   type,
 }: ChatMessagesProps) => {
   const queryKey = `chat:${chatId}`;
+  const addKey = `chat:${chatId}:messages`;
+  const updateKey = `chat:${chatId}:messages:update` 
 
   const {
     data,
@@ -55,6 +53,7 @@ export const ChatMessages = ({
     paramKey,
     paramValue,
   });
+  useChatSocket({ queryKey, addKey, updateKey });
 
   if (status === "loading") {
     return (
@@ -66,7 +65,6 @@ export const ChatMessages = ({
       </div>
     )
   }
-
   if (status === "error") {
     return (
       <div className="flex flex-col flex-1 justify-center items-center">
@@ -77,7 +75,6 @@ export const ChatMessages = ({
       </div>
     )
   }
-
   return (
     <div className="flex-1 flex flex-col py-4 overflow-y-auto">
       <div className="flex-1" />
